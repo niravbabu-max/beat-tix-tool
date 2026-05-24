@@ -573,8 +573,8 @@ function updateResults() {
   let baseFee = 0;
   if (billableCitations.length > 0) {
     const highestFee = Math.max(...billableCitations.map(c => c.fee + (c.jail ? JAIL_SURCHARGE : 0)));
-    const extraCitations = Math.max(0, billableCitations.length - 3);
-    baseFee = highestFee + (extraCitations * 100);
+    const multiCiteSurcharge = billableCitations.length > 3 ? 200 : 0;
+    baseFee = highestFee + multiCiteSurcharge;
   }
   const hasJailSurcharge = billableCitations.some(c => c.jail);
   const cdlSurcharge = isCDL ? 300 : 0;
@@ -608,11 +608,10 @@ function updateResults() {
     document.getElementById('rFee').textContent = fmt(totalFee);
     document.getElementById('rFee').style.fontSize = '';
   }
-  const extraCitationCount = Math.max(0, billableCitations.length - 3);
   let tierLabel = TIER_LABELS[highestTier];
   if (billableCitations.length > 1) tierLabel += ' · ' + billableCitations.length + ' tickets';
-  if (extraCitationCount > 0) tierLabel += ' (+$'+( extraCitationCount*100 )+' for extra citations)';
   let surchargeBreakdown = [];
+  if (billableCitations.length > 3) surchargeBreakdown.push('+$200 multi-citation');
   if (hasJailSurcharge) surchargeBreakdown.push('+$200 incarcerable');
   if (cdlSurcharge) surchargeBreakdown.push('+$300 CDL');
   if (oosSurcharge) surchargeBreakdown.push('+$200 out-of-state');
